@@ -13,10 +13,20 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 sm:px-6">
-      <div className="mx-auto flex max-w-5xl justify-center">
-        <BookmarkDashboard user={user} />
+    <>
+      <div className="min-h-screen w-full bg-[#020617] relative">
+        {/* Dark Radial Glow Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `radial-gradient(circle 500px at 50% 200px, #3e3e3e, transparent)`,
+          }}
+        />
+        {/* Your Content/Components */}
+        <div className="absolute pt-10 w-full flex justify-center items-center">
+          <BookmarkDashboard user={user} />
+        </div>
       </div>
-    </main>
+    </>
   );
 }

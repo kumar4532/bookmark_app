@@ -8,10 +8,20 @@ export default async function LandingPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 sm:px-6">
-      <div className="mx-auto flex max-w-5xl justify-center">
-        <GoogleAuth user={user} />
+    <>
+      <div className="min-h-screen w-full bg-[#020617] relative">
+        {/* Dark Radial Glow Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `radial-gradient(circle 500px at 50% 200px, #3e3e3e, transparent)`,
+          }}
+        />
+        {/* Your Content/Components */}
+        <div className="absolute pt-52 w-full flex justify-center items-center">
+          <GoogleAuth user={user} />
+        </div>
       </div>
-    </main>
+    </>
   );
 }
