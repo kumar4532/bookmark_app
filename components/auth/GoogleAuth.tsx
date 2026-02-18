@@ -1,10 +1,11 @@
 "use client";
 
-import { getSupabaseBrowserClient } from "@/utils/supabase/browser-client";
-import type { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
+import { getSupabaseBrowserClient } from "@/utils/supabase/browser-client";
 
 type GoogleLoginProps = {
   user: User | null;
@@ -15,7 +16,6 @@ export default function GoogleLogin({ user }: GoogleLoginProps) {
   const supabase = getSupabaseBrowserClient();
   const [currentUser, setCurrentUser] = useState<User | null>(user);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const {
@@ -31,7 +31,7 @@ export default function GoogleLogin({ user }: GoogleLoginProps) {
 
   const handleGoogleLogin = async () => {
     setIsSubmitting(true);
-    setErrorMessage(null);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -42,8 +42,11 @@ export default function GoogleLogin({ user }: GoogleLoginProps) {
     setIsSubmitting(false);
 
     if (error) {
-      setErrorMessage(error.message);
+      toast.error("Failed to start Google login");
+      return;
     }
+
+    toast.success("Redirecting to Google...", { icon: "🔐" });
   };
 
   useEffect(() => {
@@ -74,8 +77,6 @@ export default function GoogleLogin({ user }: GoogleLoginProps) {
       >
         {isSubmitting ? "Redirecting..." : "Continue with Google"}
       </button>
-
-      {errorMessage ? <p className="mt-4 text-sm text-red-300">{errorMessage}</p> : null}
     </section>
   );
 }

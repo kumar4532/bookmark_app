@@ -8,6 +8,7 @@ import { getSupabaseBrowserClient } from "@/utils/supabase/browser-client";
 import { GoSignOut } from "react-icons/go";
 import Image from "next/image";
 import Spinner from "../skeleton/Spinner";
+import toast from "react-hot-toast";
 
 type BookmarkDashboardProps = {
   user: User;
@@ -39,9 +40,6 @@ export default function BookmarkDashboard({
   const [deletingBookmarkIds, setDeletingBookmarkIds] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  console.log(user);
-
-
   const fetchBookmarks = async (userId: string) => {
     const { data, error } = await supabase
       .from("bookmarks")
@@ -49,7 +47,13 @@ export default function BookmarkDashboard({
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (!error && data) setBookmarks(data);
+
+    if (error) {
+      toast.error("Failed to fetch bookmarks")
+      return;
+    }
+
+    if (data) setBookmarks(data);
   };
 
   useEffect(() => {
@@ -89,7 +93,7 @@ export default function BookmarkDashboard({
     const normalizedUrl = normalizeUrl(url);
 
     if (!cleanTitle || !normalizedUrl) {
-      setErrorMessage("Please provide a valid title and URL.");
+      toast.error("Please provide a valid title and URL.");
       return;
     }
 
@@ -107,12 +111,13 @@ export default function BookmarkDashboard({
       .single();
 
     if (error) {
-      setErrorMessage("Failed to add bookmark.");
+      toast.error("Failed to add bookmark.");
       setIsSaving(false);
       return;
     }
 
     setBookmarks((prev) => [data, ...prev]);
+    toast.success("Bookmark saved");
 
     setTitle("");
     setUrl("");
@@ -124,11 +129,12 @@ export default function BookmarkDashboard({
 
     const { error } = await supabase.from("bookmarks").delete().eq("id", id);
 
-    if (!error) {
+    if (error) {
+      toast.error("Failed to delete bookmark");
+    } else {
       setBookmarks((prev) => prev.filter((b) => b.id !== id));
+      toast.success("Bookmark removed", { icon: "🗑️" });
     }
-
-    setDeletingBookmarkIds((prev) => prev.filter((item) => item !== id));
   };
 
   const handleSignOut = async () => {
@@ -139,9 +145,11 @@ export default function BookmarkDashboard({
     setIsSigningOut(false);
 
     if (error) {
-      setErrorMessage(error.message);
+      toast.error("Failed to sign out");
       return;
     }
+
+    toast.success("Signed out successfully");
 
     router.replace("/");
     router.refresh();
@@ -215,10 +223,6 @@ export default function BookmarkDashboard({
             )}
           </button>
         </form>
-
-        {errorMessage && (
-          <p className="mt-4 text-sm text-red-300">{errorMessage}</p>
-        )}
       </div>
 
       <div className="w-full rounded-2xl border border-slate-700 bg-[#F9F7F7] p-6 text-slate-100 shadow-2xl shadow-slate-950/50 mt-6 space-y-3">
