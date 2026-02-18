@@ -155,3 +155,29 @@ utils/supabase/
 types/
   database.ts
 ```
+
+## Jargons and Challenges
+
+### 1. Supabase Configuration & Ecosystem
+
+- Jargon/Concept: Supabase Client Setup & Project Configuration
+- Where it appeared: Initial database setup, authentication configuration, and client initialization in the frontend.
+- What it means: Understanding how Supabase connects the frontend to the PostgreSQL database, manages authentication, and uses environment variables securely.
+- How I dealt with it: Since I hadn’t used Supabase before, I explored the official documentation and dashboard thoroughly. AI-generated suggestions were sometimes outdated, so I relied more on official docs and hands-on testing.
+- Final takeaway: Always verify AI-generated code with official documentation, especially when working with rapidly evolving tools.
+
+### 2. State Synchronization & Data Fetching Strategy
+
+- Jargon/Concept: State Management with Realtime Data
+- Where it appeared: Handling bookmark insertion, deletion, and keeping UI state in sync with the database.
+- What it means: Ensuring the frontend state always reflects the true database state, especially when realtime updates are involved.
+- How I dealt with it: I created channels to listen real time postgres changes using supabase realtime and further filtering them based on user after that I restructured my fetching logic to avoid conflicts between manual state updates and realtime triggers. This ensured consistent and predictable UI updates.
+- Final takeaway: Combining local state updates with realtime subscriptions requires thoughtful structure to avoid stale or duplicated data.
+
+### 3. OAuth Authentication Flow
+
+- Jargon/Concept: OAuth Redirect Flow (Google Login)
+- Where it appeared: Implementing Google authentication using Supabase Auth.
+- What it means: Users authenticate through Google and are redirected back to the application with a valid session.
+- How I dealt with it: I followed official Supabase documentation and a YouTube guide to correctly configure redirect URLs and provider settings.
+- Final takeaway: OAuth is straightforward once redirect URLs and provider configurations are properly set up, but production environments require careful allowlist configuration.
